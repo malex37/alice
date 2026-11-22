@@ -1,0 +1,21 @@
+# Allowlist: secrets and unrelated files can never enter an image build context.
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+!apps
+apps/*
+!apps/qdify
+apps/qdify/*
+!apps/qdify/shared
+!apps/qdify/api
+!apps/qdify/web
+**/node_modules
+**/dist
+**/data
+**/.env
+**/.env.*
+**/.credentials*
+**/*.db
+**/*.db-*
