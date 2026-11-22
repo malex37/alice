@@ -1,5 +1,6 @@
 import type { CreateTaskInput, Task, TaskPriority } from '@alice/qdify-shared';
 import { useState, type FormEvent } from 'react';
+import { control, fields } from './ui.js';
 
 interface Props {
   task?: Task;
@@ -29,8 +30,9 @@ export function TaskForm({ task, submitLabel, onSubmit, onCancel }: Props) {
   }
 
   return (
-    <form className="task-form" onSubmit={submit}>
+    <form className="grid gap-2" onSubmit={submit}>
       <input
+        className={control}
         aria-label="Title"
         placeholder="What needs doing?"
         required
@@ -40,20 +42,23 @@ export function TaskForm({ task, submitLabel, onSubmit, onCancel }: Props) {
         onChange={(event) => setTitle(event.target.value)}
       />
       <textarea
+        className={control}
         aria-label="Notes"
         placeholder="Notes"
         maxLength={20_000}
         value={notes}
         onChange={(event) => setNotes(event.target.value)}
       />
-      <div className="fields">
+      <div className={fields}>
         <input
+          className={control}
           aria-label="Due date"
           type="date"
           value={dueDate}
           onChange={(event) => setDueDate(event.target.value)}
         />
         <select
+          className={control}
           aria-label="Priority"
           value={priority}
           onChange={(event) => setPriority(event.target.value as TaskPriority)}
@@ -62,9 +67,11 @@ export function TaskForm({ task, submitLabel, onSubmit, onCancel }: Props) {
           <option value="normal">Normal</option>
           <option value="high">High</option>
         </select>
-        <button disabled={busy}>{submitLabel}</button>
+        <button className={control} disabled={busy}>
+          {submitLabel}
+        </button>
         {onCancel && (
-          <button type="button" onClick={onCancel}>
+          <button type="button" className={control} onClick={onCancel}>
             Cancel
           </button>
         )}

@@ -8,7 +8,7 @@ including moon. The root is language-neutral: each app owns its package workspac
 | --- | --- | --- |
 | `qdify-shared` | `apps/qdify/shared` | Task contract (zod) |
 | `qdify-api` | `apps/qdify/api` | Fastify + SQLite API |
-| `qdify-web` | `apps/qdify/web` | React web UI |
+| `qdify-web` | `apps/qdify/web` | React + Tailwind CSS web UI |
 | `qdify-homeassistant` | `apps/qdify/homeassistant` | Home Assistant to-do integration |
 | `infra-aws` | `infra/aws` | AWS CDK plan (no code yet) |
 

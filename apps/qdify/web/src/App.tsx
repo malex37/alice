@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { api, saveToken, UnauthorizedError } from './api.js';
 import { TaskForm } from './TaskForm.js';
 import { TokenPrompt } from './TokenPrompt.js';
+import { control, page, row } from './ui.js';
 
 const FILTERS: { label: string; value: TaskStatus | 'all' }[] = [
   { label: 'Open', value: 'open' },
@@ -65,23 +66,25 @@ export function App() {
   const visible = tasks?.filter((task) => filter === 'all' || task.status === filter);
 
   return (
-    <main>
+    <main className={page}>
       <h1>qdify</h1>
       <TaskForm submitLabel="Add task" onSubmit={(input) => sync(() => api.create(input))} />
-      <nav aria-label="Filter tasks">
+      <nav aria-label="Filter tasks" className="mt-6 flex gap-2">
         {FILTERS.map(({ label, value }) => (
-          <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>
+          <button key={value} className={`${control} aria-pressed:font-bold aria-pressed:underline`} aria-pressed={filter === value} onClick={() => setFilter(value)}>
             {label}
           </button>
         ))}
       </nav>
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert" className="text-danger">
+          {error}
+        </p>}
       {!visible && !error && <p>Loading…</p>}
       {visible?.length === 0 && <p>No tasks here.</p>}
-      <ul>
+      <ul className="list-none p-0">
         {visible?.map((task) =>
           editing === task.id ? (
-            <li key={task.id}>
+            <li key={task.id} className={row}>
               <TaskForm
                 task={task}
                 submitLabel="Save"
@@ -94,9 +97,10 @@ export function App() {
               />
             </li>
           ) : (
-            <li key={task.id} className={`task ${task.status}`}>
+            <li key={task.id} className={`${row} flex items-start gap-3`}>
               <input
                 type="checkbox"
+                className={`${control} mt-[0.35rem]`}
                 aria-label={`Done: ${task.title}`}
                 checked={task.status === 'done'}
                 onChange={(event) => {
@@ -104,20 +108,27 @@ export function App() {
                   void sync(() => api.update(task.id, { status }));
                 }}
               />
-              <div className="body">
-                <span className="title">{task.title}</span>
-                {task.notes && <p className="notes">{task.notes}</p>}
-                <small>
+              <div className="min-w-0 flex-1 wrap-anywhere">
+                <span className={task.status === 'done' ? 'line-through opacity-65' : undefined}>
+                  {task.title}
+                </span>
+                {task.notes && (
+                  <p className="m-0 whitespace-pre-wrap opacity-80">{task.notes}</p>
+                )}
+                <small className="flex gap-3">
                   {PRIORITY_LABEL[task.priority] && <span>{PRIORITY_LABEL[task.priority]}</span>}
                   {task.dueDate && (
-                    <span className={task.status === 'open' && task.dueDate < today() ? 'overdue' : ''}>
+                    <span className={task.status === 'open' && task.dueDate < today() ? 'text-danger' : ''}>
                       Due {task.dueDate}
                     </span>
                   )}
                 </small>
               </div>
-              <button onClick={() => setEditing(task.id)}>Edit</button>
+              <button className={control} onClick={() => setEditing(task.id)}>
+                Edit
+              </button>
               <button
+                className={control}
                 onClick={() => {
                   if (confirm(`Delete "${task.title}"?`)) void sync(() => api.remove(task.id));
                 }}
