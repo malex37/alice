@@ -1,0 +1,7 @@
+$schema: '../cache/schemas/tasks.json'
+
+# Inherited by every project. Toolchains come from mise, so every task runs on
+# moon's `system` toolchain. Changing a pinned version invalidates every cache.
+implicitInputs:
+  - '/.mise.toml'
+  - '/.moon/tasks/**/*.yml'
