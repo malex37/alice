@@ -1,0 +1,20 @@
+:root {
+  color-scheme: light dark;
+  font: 16px/1.5 system-ui, sans-serif;
+}
+body { margin: 0; }
+main { box-sizing: border-box; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem; }
+button, input, select, textarea { font: inherit; }
+ul { list-style: none; padding: 0; }
+li { padding: 0.75rem 0; border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent); }
+nav { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+nav [aria-pressed='true'] { font-weight: 700; text-decoration: underline; }
+.task-form { display: grid; gap: 0.5rem; }
+.fields { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.task { display: flex; align-items: flex-start; gap: 0.75rem; }
+.task input { margin-top: 0.35rem; }
+.body { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.done .title { text-decoration: line-through; opacity: 0.65; }
+.notes { margin: 0; white-space: pre-wrap; opacity: 0.8; }
+small { display: flex; gap: 0.75rem; }
+.overdue, [role='alert'] { color: #d33; }

@@ -1,0 +1,5 @@
+id: qdify-shared
+language: typescript
+layer: library
+toolchains:
+  default: system
