@@ -71,14 +71,21 @@ export function App() {
       <TaskForm submitLabel="Add task" onSubmit={(input) => sync(() => api.create(input))} />
       <nav aria-label="Filter tasks" className="mt-6 flex gap-2">
         {FILTERS.map(({ label, value }) => (
-          <button key={value} className={`${control} aria-pressed:font-bold aria-pressed:underline`} aria-pressed={filter === value} onClick={() => setFilter(value)}>
+          <button
+            key={value}
+            className={`${control} aria-pressed:font-bold aria-pressed:underline`}
+            aria-pressed={filter === value}
+            onClick={() => setFilter(value)}
+          >
             {label}
           </button>
         ))}
       </nav>
-      {error && <p role="alert" className="text-danger">
+      {error && (
+        <p role="alert" className="text-danger">
           {error}
-        </p>}
+        </p>
+      )}
       {!visible && !error && <p>Loading…</p>}
       {visible?.length === 0 && <p>No tasks here.</p>}
       <ul className="list-none p-0">
@@ -112,13 +119,15 @@ export function App() {
                 <span className={task.status === 'done' ? 'line-through opacity-65' : undefined}>
                   {task.title}
                 </span>
-                {task.notes && (
-                  <p className="m-0 whitespace-pre-wrap opacity-80">{task.notes}</p>
-                )}
+                {task.notes && <p className="m-0 whitespace-pre-wrap opacity-80">{task.notes}</p>}
                 <small className="flex gap-3">
                   {PRIORITY_LABEL[task.priority] && <span>{PRIORITY_LABEL[task.priority]}</span>}
                   {task.dueDate && (
-                    <span className={task.status === 'open' && task.dueDate < today() ? 'text-danger' : ''}>
+                    <span
+                      className={
+                        task.status === 'open' && task.dueDate < today() ? 'text-danger' : ''
+                      }
+                    >
                       Due {task.dueDate}
                     </span>
                   )}
