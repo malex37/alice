@@ -1,0 +1,27 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to qdify",
+        "data": { "url": "Base URL", "api_token": "API token" },
+        "data_description": {
+          "url": "For example http://192.168.1.20:8787",
+          "api_token": "The server's QDIFY_API_TOKEN. Leave empty if it has none."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update the qdify API token",
+        "data": { "api_token": "API token" }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to qdify.",
+      "invalid_auth": "qdify rejected that token.",
+      "invalid_url": "Enter an http:// or https:// URL."
+    },
+    "abort": {
+      "already_configured": "This qdify server is already configured.",
+      "reauth_successful": "The API token was updated."
+    }
+  }
+}
