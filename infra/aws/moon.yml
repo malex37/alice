@@ -1,0 +1,7 @@
+id: infra-aws
+# Plan only. Change to `typescript` when the CDK app lands, to inherit the shared tasks.
+language: unknown
+layer: configuration
+stack: infrastructure
+toolchains:
+  default: system

@@ -1,0 +1,123 @@
+# Adding a project
+
+## Conventions
+
+- **Location:** `apps/<app>/<component>`, `libs/<name>` or `infra/<name>`. A directory
+  becomes a project when it has a `moon.yml`.
+- **Id:** set it explicitly, as `<app>-<component>`.
+- **Toolchains:** pin them in `.mise.toml`. moon toolchain plugins aren't used, so every
+  project sets `toolchains.default: system`.
+- **Dependencies:** moon can't infer them without plugins. List each one in `dependsOn`,
+  even if `package.json` already has it. `^:build` relies on this.
+- **Task names:** `build`, `typecheck`, `test`, `lint`, `dev` (later `deploy`), so that
+  `moon run :test` covers every language.
+- **Inputs and outputs:** declare both, or caching will be wrong.
+
+## Steps
+
+1. Create the directory and its `moon.yml`.
+2. Pin any new toolchain in `.mise.toml` and run `mise install`.
+3. For a Node package, run `pnpm install` (the workspace globs already match).
+4. Run `pnpm exec moon project <id>` to see what it inherited.
+5. When a second project shares a language, move the common tasks to
+   `.moon/tasks/<language>.yml` with `inheritedBy.languages`.
+
+## TypeScript
+
+Tasks come from `.moon/tasks/typescript.yml`. Add `package.json`, `tsconfig.json` and
+`tsconfig.build.json`.
+
+```yaml
+id: example-worker
+language: typescript
+toolchains:
+  default: system
+dependsOn: [qdify-shared]
+```
+
+## Python
+
+Tasks come from `.moon/tasks/python.yml`. Add `requirements-dev.txt` with at least pytest
+and ruff; `setup` creates the project's `.venv`.
+
+```yaml
+id: example-script
+language: python
+toolchains:
+  default: system
+```
+
+## Android (Gradle)
+
+Pin `java` in `.mise.toml`, commit the Gradle wrapper, and install the Android SDK.
+
+```yaml
+id: example-android
+language: kotlin
+toolchains:
+  default: system
+fileGroups:
+  sources: ['app/src/**/*', '**/*.gradle.kts', 'gradle/**/*', 'gradle.properties']
+tasks:
+  build:
+    command: ./gradlew assembleDebug
+    inputs: ['@group(sources)']
+    outputs: ['app/build/outputs']
+  test:
+    command: ./gradlew testDebugUnitTest
+    inputs: ['@group(sources)']
+  lint:
+    command: ./gradlew lintDebug
+    inputs: ['@group(sources)']
+```
+
+## iOS (xcodebuild)
+
+Xcode can't be pinned by mise and only runs on macOS, hence `os: macos`.
+
+```yaml
+id: example-ios
+language: swift
+toolchains:
+  default: system
+fileGroups:
+  sources: ['App/**/*', 'AppTests/**/*', 'App.xcodeproj/**/*']
+tasks:
+  build:
+    command: >-
+      xcodebuild build -project App.xcodeproj -scheme App
+      -destination 'generic/platform=iOS Simulator' -derivedDataPath build
+    inputs: ['@group(sources)']
+    outputs: ['build/Build/Products']
+    options:
+      os: macos
+  test:
+    command: >-
+      xcodebuild test -project App.xcodeproj -scheme App
+      -destination 'platform=iOS Simulator,name=iPhone 17' -derivedDataPath build
+    inputs: ['@group(sources)']
+    options:
+      os: macos
+```
+
+## C++ (CMake)
+
+Pin `cmake` and `ninja` in `.mise.toml`. The compiler comes from the OS.
+
+```yaml
+id: example-cpp
+language: cplusplus
+toolchains:
+  default: system
+fileGroups:
+  sources: ['CMakeLists.txt', 'src/**/*', 'include/**/*', 'tests/**/*']
+tasks:
+  build:
+    script: cmake -S . -B build -G Ninja && cmake --build build
+    inputs: ['@group(sources)']
+    outputs: ['build']
+  test:
+    command: ctest --test-dir build --output-on-failure
+    deps: ['~:build']
+    inputs: ['@group(sources)']
+```
