@@ -1,7 +1,8 @@
 # Alice
 
 A polyglot monorepo for apps hosted locally and on a private AWS account.
-[moon](https://moonrepo.dev) runs tasks and [mise](https://mise.jdx.dev) pins toolchains.
+[moon](https://moonrepo.dev) runs tasks and [mise](https://mise.jdx.dev) pins every tool,
+including moon. The root is language-neutral: each app owns its package workspace.
 
 | Project | Path | What it is |
 | --- | --- | --- |
@@ -18,15 +19,15 @@ Requires [mise](https://mise.jdx.dev) activated in your shell (or prefix command
 
 ```sh
 mise install
-pnpm install
-pnpm check      # moon run :typecheck :lint :test :build
+pnpm --dir apps/qdify install
+moon run :typecheck :lint :test :build
 ```
 
 ## Develop qdify
 
 ```sh
-pnpm exec moon run qdify-api:dev    # http://127.0.0.1:8787
-pnpm exec moon run qdify-web:dev    # http://localhost:5173, proxies /api
+moon run qdify-api:dev    # http://127.0.0.1:8787
+moon run qdify-web:dev    # http://localhost:5173, proxies /api
 ```
 
 ## Host qdify locally

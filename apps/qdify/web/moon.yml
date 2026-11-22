@@ -1,5 +1,6 @@
 id: qdify-web
 language: typescript
+tags: [qdify-pnpm]
 layer: application
 stack: frontend
 toolchains:

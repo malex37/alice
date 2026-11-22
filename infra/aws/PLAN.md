@@ -47,7 +47,8 @@ Keeping data separate means the app stack can be destroyed and recreated safely.
 
 ## Steps
 
-1. Scaffold the CDK app here, set `language: typescript`, and make `build` run `cdk synth`.
+1. Scaffold the CDK app here as its own pnpm workspace (see `docs/monorepo.md`), set
+   `language: typescript`, and make `build` run `cdk synth`.
 2. Add the DynamoDB store and shared store tests.
 3. Add `QdifyData`, then `QdifyApp`.
 4. Add a `deploy` task with `cache: false` and `runInCI: false`.

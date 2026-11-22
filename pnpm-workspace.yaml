@@ -1,7 +1,0 @@
-packages:
-  - 'apps/*/*'
-  - 'libs/*'
-  - 'infra/*'
-onlyBuiltDependencies:
-  - '@moonrepo/cli'
-  - esbuild

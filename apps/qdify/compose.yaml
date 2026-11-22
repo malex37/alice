@@ -2,9 +2,7 @@ name: qdify
 
 services:
   qdify:
-    build:
-      context: ../..
-      dockerfile: apps/qdify/Dockerfile
+    build: .
     image: alice/qdify:${QDIFY_IMAGE_TAG:-local}
     restart: unless-stopped
     init: true

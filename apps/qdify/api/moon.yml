@@ -1,5 +1,6 @@
 id: qdify-api
 language: typescript
+tags: [qdify-pnpm]
 layer: application
 stack: backend
 toolchains:

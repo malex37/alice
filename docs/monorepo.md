@@ -5,7 +5,9 @@
 - **Location:** `apps/<app>/<component>`, `libs/<name>` or `infra/<name>`. A directory
   becomes a project when it has a `moon.yml`.
 - **Id:** set it explicitly, as `<app>-<component>`.
-- **Toolchains:** pin them in `.mise.toml`. moon toolchain plugins aren't used, so every
+- **Root:** keep it language-neutral. No `package.json`, lockfile or `node_modules`; those
+  belong to the app that needs them.
+- **Toolchains:** pin them in `.mise.toml`, as moon itself is. moon toolchain plugins aren't used, so every
   project sets `toolchains.default: system`.
 - **Dependencies:** moon can't infer them without plugins. List each one in `dependsOn`,
   even if `package.json` already has it. `^:build` relies on this.
@@ -17,10 +19,26 @@
 
 1. Create the directory and its `moon.yml`.
 2. Pin any new toolchain in `.mise.toml` and run `mise install`.
-3. For a Node package, run `pnpm install` (the workspace globs already match).
-4. Run `pnpm exec moon project <id>` to see what it inherited.
+3. For a Node package, see [pnpm workspaces](#pnpm-workspaces).
+4. Run `moon project <id>` to see what it inherited.
 5. When a second project shares a language, move the common tasks to
    `.moon/tasks/<language>.yml` with `inheritedBy.languages`.
+
+## pnpm workspaces
+
+There is one workspace per app (or infra project), at `apps/<app>`, each with its own
+lockfile.
+
+- **New package in qdify:** add it to `apps/qdify/pnpm-workspace.yaml`, use `catalog:` for
+  the shared tool versions, tag it `qdify-pnpm` in its `moon.yml`, then run
+  `pnpm --dir apps/qdify install`. If the image needs it, also add it to
+  `apps/qdify/.dockerignore` and the Dockerfile.
+- **New workspace:** create `apps/<app>/pnpm-workspace.yaml`, then copy
+  `.moon/tasks/qdify-pnpm.yml` to `<app>-pnpm.yml` with that app's paths and tag. Without
+  it, lockfile changes won't invalidate moon's cache.
+- **Across workspaces:** `workspace:*` doesn't reach another workspace. Use a `link:`
+  dependency, install the linked package's own dependencies separately, and list it in
+  `dependsOn`.
 
 ## TypeScript
 
@@ -30,6 +48,7 @@ Tasks come from `.moon/tasks/typescript.yml`. Add `package.json`, `tsconfig.json
 ```yaml
 id: example-worker
 language: typescript
+tags: [qdify-pnpm]
 toolchains:
   default: system
 dependsOn: [qdify-shared]
