@@ -7,11 +7,11 @@ Node files. The catch is that `workspace:*` only resolves inside one workspace.
 
 ## Do you need this?
 
-| Situation | What to do |
-| --- | --- |
-| Packages in the same app share code | Nothing. Use `workspace:*`, as `qdify-api` does with `qdify-shared`. |
-| One small library that isn't shipped in a Docker image | Use [`link:`](#small-case-link) and keep the layout. |
-| Several libraries or consumers, or a linked library ships in an image | [Lift the workspace to the root](#lift-the-workspace-to-the-root). |
+| Situation                                                             | What to do                                                           |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Packages in the same app share code                                   | Nothing. Use `workspace:*`, as `qdify-api` does with `qdify-shared`. |
+| One small library that isn't shipped in a Docker image                | Use [`link:`](#small-case-link) and keep the layout.                 |
+| Several libraries or consumers, or a linked library ships in an image | [Lift the workspace to the root](#lift-the-workspace-to-the-root).   |
 
 ## Small case: `link:`
 

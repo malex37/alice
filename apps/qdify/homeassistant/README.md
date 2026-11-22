@@ -13,15 +13,15 @@ Adds a qdify to-do list to Home Assistant. Tested with Home Assistant 2026.11.2.
 
 ## Mapping
 
-| qdify | Home Assistant |
-| --- | --- |
-| `title` | summary |
-| `notes` | description |
-| `dueDate` | due (date only) |
-| `status: open` | `needs_action` |
-| `status: done` | `completed` |
-| `completedAt` | completed |
-| `priority` | not shown; preserved on edits |
+| qdify          | Home Assistant                |
+| -------------- | ----------------------------- |
+| `title`        | summary                       |
+| `notes`        | description                   |
+| `dueDate`      | due (date only)               |
+| `status: open` | `needs_action`                |
+| `status: done` | `completed`                   |
+| `completedAt`  | completed                     |
+| `priority`     | not shown; preserved on edits |
 
 The list refreshes every 30 seconds and after each change. Edits send only the changed
 fields, so they don't undo changes made in the web UI since the last poll.

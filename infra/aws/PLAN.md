@@ -6,11 +6,11 @@ Decided: AWS CDK in TypeScript. Everything else here is a proposal.
 
 ## Hosting options
 
-| Option | Storage | For | Against |
-| --- | --- | --- | --- |
-| **A. Lambda + API Gateway HTTP API, web on S3 + CloudFront** (recommended) | DynamoDB | No servers, next to no idle cost, managed TLS | Needs a Lambda entry point and a DynamoDB store; public endpoint |
-| B. ECS Fargate running the existing image | DynamoDB | Same container as local | Always-on cost; a load balancer or tunnel for ingress |
-| C. Small EC2 instance running compose | SQLite on EBS | No code changes; can be private over a VPN | A host to patch and back up |
+| Option                                                                     | Storage       | For                                           | Against                                                          |
+| -------------------------------------------------------------------------- | ------------- | --------------------------------------------- | ---------------------------------------------------------------- |
+| **A. Lambda + API Gateway HTTP API, web on S3 + CloudFront** (recommended) | DynamoDB      | No servers, next to no idle cost, managed TLS | Needs a Lambda entry point and a DynamoDB store; public endpoint |
+| B. ECS Fargate running the existing image                                  | DynamoDB      | Same container as local                       | Always-on cost; a load balancer or tunnel for ingress            |
+| C. Small EC2 instance running compose                                      | SQLite on EBS | No code changes; can be private over a VPN    | A host to patch and back up                                      |
 
 With A, CloudFront routes `/api/*` to API Gateway so the web app stays on one origin and
 needs no CORS. Choose C instead if qdify must never have a public endpoint.

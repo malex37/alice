@@ -4,13 +4,13 @@ A polyglot monorepo for apps hosted locally and on a private AWS account.
 [moon](https://moonrepo.dev) runs tasks and [mise](https://mise.jdx.dev) pins every tool,
 including moon. The root is language-neutral: each app owns its package workspace.
 
-| Project | Path | What it is |
-| --- | --- | --- |
-| `qdify-shared` | `apps/qdify/shared` | Task contract (zod) |
-| `qdify-api` | `apps/qdify/api` | Fastify + SQLite API |
-| `qdify-web` | `apps/qdify/web` | React + Tailwind CSS web UI |
+| Project               | Path                       | What it is                       |
+| --------------------- | -------------------------- | -------------------------------- |
+| `qdify-shared`        | `apps/qdify/shared`        | Task contract (zod)              |
+| `qdify-api`           | `apps/qdify/api`           | Fastify + SQLite API             |
+| `qdify-web`           | `apps/qdify/web`           | React + Tailwind CSS web UI      |
 | `qdify-homeassistant` | `apps/qdify/homeassistant` | Home Assistant to-do integration |
-| `infra-aws` | `infra/aws` | AWS CDK plan (no code yet) |
+| `infra-aws`           | `infra/aws`                | AWS CDK plan (no code yet)       |
 
 ## Setup
 
@@ -49,24 +49,24 @@ Tasks live in the `qdify_qdify-data` volume. `docker compose down` keeps it;
 
 ## Configuration
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `QDIFY_HOST` | `127.0.0.1` | Listen address (`0.0.0.0` in the container) |
-| `QDIFY_PORT` | `8787` | Listen port |
-| `QDIFY_DB_PATH` | `data/qdify.db` | SQLite file |
-| `QDIFY_API_TOKEN` | unset | Bearer token for `/api/tasks`; required by compose |
-| `QDIFY_WEB_DIST` | unset | Web build to serve |
+| Variable          | Default         | Meaning                                            |
+| ----------------- | --------------- | -------------------------------------------------- |
+| `QDIFY_HOST`      | `127.0.0.1`     | Listen address (`0.0.0.0` in the container)        |
+| `QDIFY_PORT`      | `8787`          | Listen port                                        |
+| `QDIFY_DB_PATH`   | `data/qdify.db` | SQLite file                                        |
+| `QDIFY_API_TOKEN` | unset           | Bearer token for `/api/tasks`; required by compose |
+| `QDIFY_WEB_DIST`  | unset           | Web build to serve                                 |
 
 ## API
 
-| Route | Notes |
-| --- | --- |
-| `GET /api/health` | Public |
-| `GET /api/tasks` | Optional `?status=open` or `?status=done` |
-| `POST /api/tasks` | `title` is required |
-| `GET /api/tasks/:id` | |
-| `PATCH /api/tasks/:id` | Omitted fields are kept; `null` clears `notes` and `dueDate` |
-| `DELETE /api/tasks/:id` | |
+| Route                   | Notes                                                        |
+| ----------------------- | ------------------------------------------------------------ |
+| `GET /api/health`       | Public                                                       |
+| `GET /api/tasks`        | Optional `?status=open` or `?status=done`                    |
+| `POST /api/tasks`       | `title` is required                                          |
+| `GET /api/tasks/:id`    |                                                              |
+| `PATCH /api/tasks/:id`  | Omitted fields are kept; `null` clears `notes` and `dueDate` |
+| `DELETE /api/tasks/:id` |                                                              |
 
 ## More
 

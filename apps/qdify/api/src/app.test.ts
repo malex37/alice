@@ -15,7 +15,10 @@ afterEach(async () => {
 async function setup(options: { token?: string; webDist?: string } = {}): Promise<FastifyInstance> {
   const store = new SqliteTaskStore(':memory:');
   const app = await buildApp({ store, ...options });
-  cleanup.push(() => store.close(), () => app.close());
+  cleanup.push(
+    () => store.close(),
+    () => app.close(),
+  );
   return app;
 }
 
@@ -28,7 +31,11 @@ function tempDir() {
 describe('tasks', () => {
   it('creates, reads, updates and deletes', async () => {
     const app = await setup();
-    const created = await app.inject({ method: 'POST', url: '/api/tasks', payload: { title: 'A' } });
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/tasks',
+      payload: { title: 'A' },
+    });
     expect(created.statusCode).toBe(201);
     const url = `/api/tasks/${created.json().id}`;
 
@@ -49,7 +56,9 @@ describe('tasks', () => {
 
   it('tracks completedAt', async () => {
     const app = await setup();
-    const { id } = (await app.inject({ method: 'POST', url: '/api/tasks', payload: { title: 'A' } })).json();
+    const { id } = (
+      await app.inject({ method: 'POST', url: '/api/tasks', payload: { title: 'A' } })
+    ).json();
     const patch = async (payload: object) =>
       (await app.inject({ method: 'PATCH', url: `/api/tasks/${id}`, payload })).json();
 
@@ -70,7 +79,9 @@ describe('tasks', () => {
 
   it('answers 400 for bad input and 404 for missing tasks', async () => {
     const app = await setup();
-    expect((await app.inject({ method: 'POST', url: '/api/tasks', payload: {} })).statusCode).toBe(400);
+    expect((await app.inject({ method: 'POST', url: '/api/tasks', payload: {} })).statusCode).toBe(
+      400,
+    );
     expect((await app.inject({ url: '/api/tasks?status=nope' })).statusCode).toBe(400);
     const missing = { method: 'PATCH', url: '/api/tasks/nope', payload: { title: 'x' } } as const;
     expect((await app.inject(missing)).statusCode).toBe(404);
@@ -112,7 +123,11 @@ describe('persistence', () => {
     const path = join(tempDir(), 'q.db');
     const first = new SqliteTaskStore(path);
     const task = await first.create({
-      title: 'A', notes: null, status: 'open', priority: 'normal', dueDate: null,
+      title: 'A',
+      notes: null,
+      status: 'open',
+      priority: 'normal',
+      dueDate: null,
     });
     await first.close();
     const second = new SqliteTaskStore(path);
@@ -124,7 +139,9 @@ describe('persistence', () => {
 describe('config', () => {
   it('treats empty variables as unset', () => {
     expect(loadConfig({ QDIFY_PORT: '', QDIFY_API_TOKEN: '' })).toMatchObject({
-      host: '127.0.0.1', port: 8787, token: undefined,
+      host: '127.0.0.1',
+      port: 8787,
+      token: undefined,
     });
   });
 });
