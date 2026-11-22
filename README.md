@@ -71,5 +71,6 @@ Tasks live in the `qdify_qdify-data` volume. `docker compose down` keeps it;
 ## More
 
 - [Adding a project in any language](docs/monorepo.md)
+- [Restructuring for TypeScript libraries shared across apps](docs/IN_CASE_OF_LIB.md)
 - [Home Assistant integration](apps/qdify/homeassistant/README.md)
 - [AWS plan](infra/aws/PLAN.md)

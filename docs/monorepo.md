@@ -38,7 +38,8 @@ lockfile.
   it, lockfile changes won't invalidate moon's cache.
 - **Across workspaces:** `workspace:*` doesn't reach another workspace. Use a `link:`
   dependency, install the linked package's own dependencies separately, and list it in
-  `dependsOn`.
+  `dependsOn`. If that stops scaling, follow [IN_CASE_OF_LIB.md](IN_CASE_OF_LIB.md) to
+  move to a single root workspace.
 
 ## TypeScript
 
