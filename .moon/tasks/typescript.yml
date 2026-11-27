@@ -1,0 +1,29 @@
+$schema: '../cache/schemas/tasks.json'
+
+inheritedBy:
+  languages: [typescript]
+
+fileGroups:
+  sources:
+    - 'src/**/*'
+  configs:
+    - 'package.json'
+    - 'tsconfig*.json'
+
+tasks:
+  build:
+    command: pnpm exec tsc -p tsconfig.build.json
+    deps: ['^:build']
+    inputs: ['@group(sources)', '@group(configs)']
+    outputs: ['dist']
+  typecheck:
+    command: pnpm exec tsc --noEmit -p tsconfig.json
+    deps: ['^:build']
+    inputs: ['@group(sources)', '@group(configs)']
+  test:
+    command: pnpm exec vitest run
+    deps: ['^:build']
+    inputs: ['@group(sources)', '@group(configs)']
+  lint:
+    command: pnpm exec oxlint --deny-warnings src
+    inputs: ['@group(sources)', '@group(configs)']

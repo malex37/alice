@@ -1,0 +1,38 @@
+$schema: '../cache/schemas/tasks.json'
+
+inheritedBy:
+  languages: [python]
+
+fileGroups:
+  sources:
+    - 'custom_components/**/*'
+    - 'src/**/*'
+    - 'tests/**/*'
+  configs:
+    - 'pyproject.toml'
+    - 'requirements-dev.txt'
+
+tasks:
+  setup:
+    # Not cached by moon: a cache hit can't restore a deleted .venv.
+    # The copied requirements file makes repeat runs instant and offline.
+    script: >-
+      cmp -s requirements-dev.txt .venv/requirements.installed ||
+      (python -m venv --clear .venv &&
+      .venv/bin/pip install --quiet --disable-pip-version-check -r requirements-dev.txt &&
+      cp requirements-dev.txt .venv/requirements.installed)
+    options:
+      cache: false
+  lint:
+    command: .venv/bin/ruff check .
+    deps: ['~:setup']
+    inputs: ['@group(sources)', '@group(configs)']
+  typecheck:
+    # Catches syntax errors; projects can override this with a real type checker.
+    command: .venv/bin/python -m compileall -q -x '[.]venv' .
+    deps: ['~:setup']
+    inputs: ['@group(sources)', '@group(configs)']
+  test:
+    command: .venv/bin/python -m pytest -q
+    deps: ['~:setup']
+    inputs: ['@group(sources)', '@group(configs)']

@@ -1,0 +1,22 @@
+id: qdify-web
+language: typescript
+tags: [qdify-pnpm]
+layer: application
+stack: frontend
+toolchains:
+  default: system
+dependsOn: [qdify-shared]
+fileGroups:
+  sources:
+    - 'src/**/*'
+    - 'index.html'
+    - 'vite.config.ts'
+tasks:
+  build:
+    command: pnpm exec vite build
+    options:
+      mergeArgs: replace
+  dev:
+    command: pnpm exec vite
+    deps: ['^:build']
+    preset: server

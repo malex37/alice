@@ -1,0 +1,12 @@
+$schema: './cache/schemas/workspace.json'
+
+# Project ids are set in each project's moon.yml (for example qdify-api).
+projects:
+  globs:
+    - 'apps/*/*/moon.yml'
+    - 'libs/*/moon.yml'
+    - 'infra/*/moon.yml'
+
+vcs:
+  client: git
+  defaultBranch: main

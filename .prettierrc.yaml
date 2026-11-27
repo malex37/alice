@@ -1,0 +1,8 @@
+# Read by editors' Prettier. It lives at the root to cover every app, and needs no package.json.
+singleQuote: true
+printWidth: 100
+overrides:
+  # pnpm owns the lockfile format. An override, unlike .prettierignore, works from any cwd.
+  - files: '**/pnpm-lock.yaml'
+    options:
+      requirePragma: true

@@ -1,0 +1,21 @@
+# secrets and local state
+.credentials*
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+
+# dependencies and output
+node_modules/
+dist/
+cdk.out/
+*.tsbuildinfo
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+coverage/
+
+# moon
+.moon/cache/

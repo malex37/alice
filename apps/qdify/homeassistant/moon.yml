@@ -1,0 +1,16 @@
+id: qdify-homeassistant
+language: python
+layer: application
+toolchains:
+  default: system
+# Talks to the API over HTTP only. `build` scope orders tasks without implying an import.
+dependsOn:
+  - id: qdify-api
+    scope: build
+tasks:
+  build:
+    script: >-
+      mkdir -p dist &&
+      tar --exclude=__pycache__ -czf dist/qdify-homeassistant.tar.gz custom_components/qdify
+    inputs: ['@group(sources)']
+    outputs: ['dist/qdify-homeassistant.tar.gz']

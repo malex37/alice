@@ -1,0 +1,11 @@
+$schema: '../cache/schemas/tasks.json'
+
+# Files shared by qdify's pnpm workspace. Each workspace gets its own tag and file
+# like this, so one app's lockfile doesn't invalidate another app's cache.
+inheritedBy:
+  tags: [qdify-pnpm]
+
+implicitInputs:
+  - '/apps/qdify/pnpm-lock.yaml'
+  - '/apps/qdify/pnpm-workspace.yaml'
+  - '/apps/qdify/tsconfig.base.json'

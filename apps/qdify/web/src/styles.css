@@ -1,0 +1,15 @@
+/*
+ * Tailwind without Preflight, so headings and form controls keep their native look.
+ * Classes are only scanned in the paths below, so local and Docker builds match.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+
+@source './';
+@source '../index.html';
+
+@theme {
+  --font-sans: system-ui, sans-serif;
+  --color-danger: #d33;
+}

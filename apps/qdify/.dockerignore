@@ -1,0 +1,16 @@
+# Allowlist: secrets and unrelated files can never enter an image build context.
+*
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.base.json
+!shared
+!api
+!web
+**/node_modules
+**/dist
+**/data
+**/.env
+**/.env.*
+**/.credentials*
+**/*.db
+**/*.db-*

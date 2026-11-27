@@ -1,0 +1,21 @@
+name: qdify
+
+services:
+  qdify:
+    build: .
+    image: alice/qdify:${QDIFY_IMAGE_TAG:-local}
+    restart: unless-stopped
+    init: true
+    environment:
+      QDIFY_API_TOKEN: ${QDIFY_API_TOKEN:?set QDIFY_API_TOKEN in apps/qdify/.env}
+    ports:
+      - '${QDIFY_BIND:-127.0.0.1}:${QDIFY_PUBLISH_PORT:-8787}:8787'
+    volumes:
+      - qdify-data:/data
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+
+volumes:
+  qdify-data:
