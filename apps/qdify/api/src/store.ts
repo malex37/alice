@@ -1,6 +1,6 @@
 import type { CreateTask, ListTasksQuery, Task, UpdateTask } from '@alice/qdify-shared';
 
-/** Persistence boundary. Async so a networked store (DynamoDB) can replace SQLite. */
+/** Persistence boundary: DynamoDB in the app, memory in tests. */
 export interface TaskStore {
   list(query: ListTasksQuery): Promise<Task[]>;
   get(id: string): Promise<Task | null>;

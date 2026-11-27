@@ -23,7 +23,7 @@ including moon. The root is language-neutral: each app owns its package workspac
 | Project               | Path                       | What it is                       |
 | --------------------- | -------------------------- | -------------------------------- |
 | `qdify-shared`        | `apps/qdify/shared`        | Task contract (zod)              |
-| `qdify-api`           | `apps/qdify/api`           | Fastify + SQLite API             |
+| `qdify-api`           | `apps/qdify/api`           | Fastify API on DynamoDB          |
 | `qdify-web`           | `apps/qdify/web`           | React + Tailwind CSS web UI      |
 | `qdify-homeassistant` | `apps/qdify/homeassistant` | Home Assistant to-do integration |
 | `infra-aws`           | `infra/aws`                | AWS CDK plan (no code yet)       |
@@ -41,10 +41,23 @@ moon run :typecheck :lint :test :build
 
 ## Develop qdify
 
+Tasks live in DynamoDB, emulated locally by [MiniStack](https://github.com/ministackorg/ministack)
+on `127.0.0.1:4566`. The API creates its table on first start. Start MiniStack once from
+`apps/qdify` (no `.env` needed):
+
 ```sh
-moon run qdify-api:dev    # http://127.0.0.1:8787
-moon run qdify-web:dev    # http://localhost:5173, proxies /api
+docker compose -f ministack.yaml up -d
 ```
+
+Then:
+
+```sh
+moon run qdify-api:dev             # http://127.0.0.1:8787
+moon run qdify-web:dev             # http://localhost:5173, proxies /api
+moon run qdify-api:test-dynamodb   # store tests against MiniStack, in a throwaway table
+```
+
+`moon run :test` doesn't need MiniStack: the HTTP tests use an in-memory store.
 
 ## Host qdify locally
 
@@ -60,18 +73,27 @@ another machine. It serves plain HTTP, so don't expose it to the internet.
 
 On WSL2, either turn on Docker Desktop's WSL integration for this distro or use `docker.exe`.
 
-Tasks live in the `qdify_qdify-data` volume. `docker compose down` keeps it;
-`docker compose down -v` deletes it.
+Tasks live in MiniStack, which `docker compose up` starts too. Dev and the container share
+it, and so share one task list.
+
+MiniStack keeps data in memory and writes it to the `qdify_ministack-data` volume only when
+it stops cleanly (`docker compose stop` or `down`). **A crash, `docker kill`, or power loss
+loses every change since the last clean stop.** `docker compose down -v` deletes the volume.
 
 ## Configuration
 
-| Variable          | Default         | Meaning                                            |
-| ----------------- | --------------- | -------------------------------------------------- |
-| `QDIFY_HOST`      | `127.0.0.1`     | Listen address (`0.0.0.0` in the container)        |
-| `QDIFY_PORT`      | `8787`          | Listen port                                        |
-| `QDIFY_DB_PATH`   | `data/qdify.db` | SQLite file                                        |
-| `QDIFY_API_TOKEN` | unset           | Bearer token for `/api/tasks`; required by compose |
-| `QDIFY_WEB_DIST`  | unset           | Web build to serve                                 |
+| Variable                  | Default                      | Meaning                                                               |
+| ------------------------- | ---------------------------- | --------------------------------------------------------------------- |
+| `QDIFY_HOST`              | `127.0.0.1`                  | Listen address (`0.0.0.0` in the container)                           |
+| `QDIFY_PORT`              | `8787`                       | Listen port                                                           |
+| `QDIFY_DYNAMODB_ENDPOINT` | unset                        | DynamoDB emulator URL; unset means real AWS. Set by `dev` and compose |
+| `QDIFY_DYNAMODB_TABLE`    | `qdify-tasks`                | Table name. Created automatically only when an endpoint is set        |
+| `AWS_REGION`              | `us-east-1` with an endpoint | Region. Without an endpoint, the AWS SDK's usual lookup               |
+| `QDIFY_API_TOKEN`         | unset                        | Bearer token for `/api/tasks`; required by compose                    |
+| `QDIFY_WEB_DIST`          | unset                        | Web build to serve                                                    |
+
+With an endpoint set and no `AWS_ACCESS_KEY_ID`, the API signs with dummy credentials
+instead of looking up your AWS profile.
 
 ## API
 

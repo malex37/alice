@@ -1,0 +1,35 @@
+# Included by compose.yaml. On its own, it needs no .env: docker compose -f ministack.yaml up -d
+name: qdify
+
+services:
+  # Local AWS emulator holding the tasks table. It keeps data in memory and writes it to the
+  # volume only when it stops cleanly, so a crash or `docker kill` loses unsaved changes.
+  ministack:
+    image: ministackorg/ministack:1.5.45
+    restart: unless-stopped
+    environment:
+      PERSIST_STATE: '1'
+      STATE_DIR: /data
+    # Loopback only: MiniStack has no authentication. Published for `moon run qdify-api:dev`.
+    ports:
+      - '127.0.0.1:${MINISTACK_PUBLISH_PORT:-4566}:4566'
+    volumes:
+      - ministack-data:/data
+    # Time to write its state before Docker kills it.
+    stop_grace_period: 60s
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4566/_ministack/health')"
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+      start_interval: 1s
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+
+volumes:
+  ministack-data:

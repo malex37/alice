@@ -8,10 +8,12 @@
     "dist"
   ],
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning dist/main.js"
+    "start": "node dist/main.js"
   },
   "dependencies": {
     "@alice/qdify-shared": "workspace:*",
+    "@aws-sdk/client-dynamodb": "3.1173.0",
+    "@aws-sdk/lib-dynamodb": "3.1173.0",
     "@fastify/static": "^10.1.12",
     "fastify": "^5.12.8",
     "zod": "^4.6.7"

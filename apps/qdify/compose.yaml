@@ -1,5 +1,9 @@
 name: qdify
 
+# MiniStack, which holds the tasks. Start it alone with `docker compose -f ministack.yaml up -d`.
+include:
+  - ministack.yaml
+
 services:
   qdify:
     build: .
@@ -8,14 +12,13 @@ services:
     init: true
     environment:
       QDIFY_API_TOKEN: ${QDIFY_API_TOKEN:?set QDIFY_API_TOKEN in apps/qdify/.env}
+      QDIFY_DYNAMODB_ENDPOINT: http://ministack:4566
     ports:
       - '${QDIFY_BIND:-127.0.0.1}:${QDIFY_PUBLISH_PORT:-8787}:8787'
-    volumes:
-      - qdify-data:/data
+    depends_on:
+      ministack:
+        condition: service_healthy
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
     security_opt: ['no-new-privileges:true']
-
-volumes:
-  qdify-data:

@@ -5,7 +5,7 @@ import type { FastifyInstance } from 'fastify';
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildApp } from './app.js';
 import { loadConfig } from './config.js';
-import { SqliteTaskStore } from './sqlite-store.js';
+import { MemoryTaskStore } from './memory-store.js';
 
 const cleanup: (() => unknown)[] = [];
 afterEach(async () => {
@@ -13,7 +13,7 @@ afterEach(async () => {
 });
 
 async function setup(options: { token?: string; webDist?: string } = {}): Promise<FastifyInstance> {
-  const store = new SqliteTaskStore(':memory:');
+  const store = new MemoryTaskStore();
   const app = await buildApp({ store, ...options });
   cleanup.push(
     () => store.close(),
@@ -118,30 +118,17 @@ describe('web build', () => {
   });
 });
 
-describe('persistence', () => {
-  it('survives a restart', async () => {
-    const path = join(tempDir(), 'q.db');
-    const first = new SqliteTaskStore(path);
-    const task = await first.create({
-      title: 'A',
-      notes: null,
-      status: 'open',
-      priority: 'normal',
-      dueDate: null,
-    });
-    await first.close();
-    const second = new SqliteTaskStore(path);
-    expect(await second.get(task.id)).toEqual(task);
-    await second.close();
-  });
-});
-
 describe('config', () => {
   it('treats empty variables as unset', () => {
     expect(loadConfig({ QDIFY_PORT: '', QDIFY_API_TOKEN: '' })).toMatchObject({
       host: '127.0.0.1',
       port: 8787,
       token: undefined,
+      dynamodb: { table: 'qdify-tasks', endpoint: undefined },
     });
+  });
+
+  it('rejects an endpoint that is not an http(s) URL', () => {
+    expect(() => loadConfig({ QDIFY_DYNAMODB_ENDPOINT: 'localhost:4566' })).toThrow();
   });
 });

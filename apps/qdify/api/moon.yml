@@ -7,7 +7,19 @@ toolchains:
   default: system
 dependsOn: [qdify-shared]
 tasks:
+  # Needs MiniStack: `docker compose up -d ministack` from apps/qdify.
   dev:
-    command: pnpm exec tsx watch --disable-warning=ExperimentalWarning src/main.ts
+    command: pnpm exec tsx watch src/main.ts
     deps: ['^:build']
     preset: server
+    env:
+      QDIFY_DYNAMODB_ENDPOINT: 'http://127.0.0.1:4566'
+  # The store tests against MiniStack, in a throwaway table. `test` covers the rest.
+  test-dynamodb:
+    command: pnpm exec vitest run src/store.test.ts
+    deps: ['^:build']
+    env:
+      QDIFY_TEST_DYNAMODB_ENDPOINT: 'http://127.0.0.1:4566'
+    options:
+      cache: false
+      runInCI: false
