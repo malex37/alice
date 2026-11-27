@@ -41,21 +41,24 @@ moon run :typecheck :lint :test :build
 
 ## Develop qdify
 
-Tasks live in DynamoDB, emulated locally by [MiniStack](https://github.com/ministackorg/ministack)
-on `127.0.0.1:4566`. The API creates its table on first start. Start MiniStack once from
-`apps/qdify` (no `.env` needed):
-
 ```sh
-docker compose -f ministack.yaml up -d
-```
-
-Then:
-
-```sh
-moon run qdify-api:dev             # http://127.0.0.1:8787
+moon run qdify-api:dev             # http://127.0.0.1:8787, in Docker
 moon run qdify-web:dev             # http://localhost:5173, proxies /api
 moon run qdify-api:test-dynamodb   # store tests against MiniStack, in a throwaway table
 ```
+
+Tasks live in DynamoDB, emulated locally by [MiniStack](https://github.com/ministackorg/ministack)
+on `127.0.0.1:4566`. `qdify-api:dev` ([scripts/dev.sh](apps/qdify/api/scripts/dev.sh)) needs
+only Docker:
+
+1. Starts MiniStack unless it is already running and healthy.
+2. Runs the API in a container ([dev.yaml](apps/qdify/dev.yaml)) with `api/src` mounted
+   read-only. tsx restarts it about a second after you save. It polls, because file events
+   from WSL or Windows may not reach the container.
+
+Ctrl-C stops the API container; MiniStack keeps running. Changes to `qdify-shared`,
+dependencies or the Dockerfile take effect on the next start. `QDIFY_PUBLISH_PORT` moves the
+API off 8787. The API creates its table on first start.
 
 `moon run :test` doesn't need MiniStack: the HTTP tests use an in-memory store.
 

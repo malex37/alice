@@ -1,7 +1,7 @@
 # API + web UI in one container; tasks live in DynamoDB (MiniStack locally).
 # The build context is apps/qdify.
 # Keep the Node and pnpm versions in step with .mise.toml.
-FROM node:24.22.3-bookworm-slim AS build
+FROM node:24.22.3-bookworm-slim AS deps
 WORKDIR /qdify
 RUN npm install --global pnpm@10.34.9
 
@@ -11,6 +11,16 @@ COPY api/package.json api/
 COPY web/package.json web/
 RUN pnpm install --frozen-lockfile
 
+# `moon run qdify-api:dev`: dev.yaml bind-mounts the API source and shared/dist over this.
+FROM deps AS dev
+ENV QDIFY_HOST=0.0.0.0 \
+    QDIFY_PORT=8787
+WORKDIR /qdify/api
+USER node
+EXPOSE 8787
+CMD ["pnpm", "exec", "tsx", "watch", "--clear-screen=false", "src/main.ts"]
+
+FROM deps AS build
 COPY shared shared
 COPY api api
 COPY web web

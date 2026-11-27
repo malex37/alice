@@ -1,0 +1,30 @@
+# The API in watch mode, for `moon run qdify-api:dev`. Needs no .env.
+name: qdify
+
+include:
+  - ministack.yaml
+
+services:
+  api-dev:
+    build:
+      context: .
+      target: dev
+    image: alice/qdify-api-dev:local
+    init: true
+    environment:
+      QDIFY_DYNAMODB_ENDPOINT: http://ministack:4566
+      # File events don't cross from WSL or Windows into the container, so poll instead.
+      CHOKIDAR_USEPOLLING: '1'
+      CHOKIDAR_INTERVAL: '300'
+    ports:
+      - '127.0.0.1:${QDIFY_PUBLISH_PORT:-8787}:8787'
+    volumes:
+      - ./api/src:/qdify/api/src:ro
+      - ./api/tsconfig.json:/qdify/api/tsconfig.json:ro
+      # Rebuilt on the host by moon (`^:build`) before the container starts.
+      - ./shared/dist:/qdify/shared/dist:ro
+    depends_on:
+      ministack:
+        condition: service_healthy
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']

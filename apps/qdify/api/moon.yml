@@ -7,13 +7,12 @@ toolchains:
   default: system
 dependsOn: [qdify-shared]
 tasks:
-  # Needs MiniStack: `docker compose up -d ministack` from apps/qdify.
+  # Starts MiniStack if it isn't up, then runs the API in a container with src mounted and
+  # hot reload on. See scripts/dev.sh and ../dev.yaml.
   dev:
-    command: pnpm exec tsx watch src/main.ts
+    command: bash scripts/dev.sh
     deps: ['^:build']
     preset: server
-    env:
-      QDIFY_DYNAMODB_ENDPOINT: 'http://127.0.0.1:4566'
   # The store tests against MiniStack, in a throwaway table. `test` covers the rest.
   test-dynamodb:
     command: pnpm exec vitest run src/store.test.ts
